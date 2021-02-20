@@ -2,6 +2,8 @@
 
 ## the C++ version of thundernet with ncnn
 
+模型均来自[thundernet_mmdetection](https://github.com/ouyanghuiyu/thundernet_mmdetection)
+
 在[ncnn](https://github.com/Tencent/ncnn)编译对应环境库替换include和lib
 
 
