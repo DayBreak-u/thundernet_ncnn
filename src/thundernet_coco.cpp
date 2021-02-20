@@ -358,9 +358,7 @@ int psroialign( ncnn::Mat bottom_blob,ncnn::Mat  roi_blob, ncnn::Mat& top_blob)
 }
 
 
-
-
-static int detect_thundernet(const cv::Mat& bgr,std::vector<Object>& objects)
+double detect_thundernet(const cv::Mat& bgr,std::vector<Object>& objects)
 {
     objects.clear();
     ncnn::Net thundernet;
@@ -396,7 +394,7 @@ static int detect_thundernet(const cv::Mat& bgr,std::vector<Object>& objects)
     ncnn::Mat anchors = generate_anchors(base_size, ratios, scales);
 
     const int target_size = 320;
-    const int pre_nms_topN = 1300;
+    const int pre_nms_topN = 1500;
     const int after_nms_topN = 200;
     const float nms_rpn = 0.7f;
     const float nms_threshold = 0.5f;
@@ -596,10 +594,10 @@ static int detect_thundernet(const cv::Mat& bgr,std::vector<Object>& objects)
     {
         objects.resize(max_per_image);
     }
-    double t6 = ncnn::get_current_time();;
+    double t6 = ncnn::get_current_time();
     std::cout << "all cost:" <<t6 - t1 << "ms" << std::endl;
-
-    return 0;
+    double cost = t6 - t1 ;
+    return cost;
 
 
 
@@ -682,9 +680,26 @@ int main(int argc, char** argv)
 
     detect_thundernet(m, objects);
 
+      // warm up
+    for (int i = 0; i < 10; i++)
+    {
+       detect_thundernet(m, objects);
+    }
+    double time_min = DBL_MAX;
+    double time_max = -DBL_MAX;
+    double time_avg = 0;
 
+    for (int i = 0; i < 10; i++)
+    {
+      double time = detect_thundernet(m, objects);
+      time_avg += time;
+      time_min = std::min(time_min, time);
+      time_max = std::max(time_max, time);
+    }
+    time_avg /= 10;
+
+    fprintf(stderr, "min = %7.2f  max = %7.2f  avg = %7.2f\n",  time_min, time_max, time_avg);
 
     draw_objects(m, objects);
-
     return 0;
 }
