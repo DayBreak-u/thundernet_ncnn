@@ -9,7 +9,7 @@
 ## 检测结果
 欢迎各位开发者移植到移动端，并测试贡献耗时
 
-耗时测试为macos 单线程
+本耗时测试为macos 单线程
 
 MobileNetV2-YOLOv3 (来自ncnn bencnmark)
 
